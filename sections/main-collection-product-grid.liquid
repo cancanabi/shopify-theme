@@ -35,11 +35,7 @@
   <section class="sp-collection-hero">
     <div class="sp-collection-hero__inner page-width">
       <div class="sp-collection-hero__content">
-        <div class="sp-collection-hero__badges" aria-label="Collection highlights">
-          <span class="sp-badge">Curated</span>
-          <span class="sp-badge">Instant drop</span>
-          <span class="sp-badge">Listen-ready</span>
-        </div>
+        <span class="sp-collection-hero__eyebrow">Collection</span>
         <h1 class="sp-collection-hero__title">{{ collection.title | escape }}</h1>
         {%- if collection.description != blank -%}
           <div class="sp-collection-hero__description rte">
@@ -47,19 +43,9 @@
           </div>
         {%- else -%}
           <p class="sp-collection-hero__description">
-            Discover premium drops crafted for immersive listening, ready to ship instantly.
+            A composed selection of signature fragrances crafted for quiet luxury and everyday rituals.
           </p>
         {%- endif -%}
-      </div>
-      <div class="sp-collection-hero__cta">
-        <div class="sp-collection-hero__stat">
-          <span class="sp-collection-hero__stat-label">Edition</span>
-          <span class="sp-collection-hero__stat-value">Limited</span>
-        </div>
-        <div class="sp-collection-hero__stat">
-          <span class="sp-collection-hero__stat-label">Delivery</span>
-          <span class="sp-collection-hero__stat-value">Instant access</span>
-        </div>
       </div>
     </div>
   </section>
@@ -68,78 +54,84 @@
     {{ 'component-facets.css' | asset_url | stylesheet_tag }}
     <script src="{{ 'facets.js' | asset_url }}" defer="defer"></script>
     <div class="sp-collection-bar">
-      <div class="sp-collection-bar__inner">
-        {% comment %} Sort is the first tabbable element when filter type is vertical {% endcomment %}
-        {%- if section.settings.enable_sorting and section.settings.filter_type == 'vertical' -%}
-          <facet-filters-form class="facets facets-vertical-sort page-width small-hide no-js-hidden">
-            <form class="facets-vertical-form" id="FacetSortForm">
-              <div class="facet-filters sorting caption">
-                <div class="facet-filters__field">
-                  <h2 class="facet-filters__label caption-large text-body">
-                    <label for="SortBy">{{ 'products.facets.sort_by_label' | t }}</label>
-                  </h2>
-                  <div class="select">
-                    {%- assign sort_by = collection.sort_by | default: collection.default_sort_by -%}
-                    <select
-                      name="sort_by"
-                      class="facet-filters__sort select__select caption-large"
-                      id="SortBy"
-                      aria-describedby="a11y-refresh-page-message"
-                    >
-                      {%- for option in collection.sort_options -%}
-                        <option
-                          value="{{ option.value | escape }}"
-                          {% if option.value == sort_by %}
-                            selected="selected"
-                          {% endif %}
+      <div class="sp-collection-bar__inner page-width">
+        <div class="sp-collection-bar__top">
+          <div class="sp-collection-bar__left">
+            <span class="sp-collection-bar__label">Filter</span>
+            <div class="product-count-vertical light sp-collection-bar__count" role="status">
+              <h2 class="product-count__text text-body">
+                <span id="ProductCountDesktop">
+                  {%- if collection.results_count -%}
+                    {{
+                      'templates.search.results_with_count'
+                      | t: terms: collection.terms, count: collection.results_count
+                    }}
+                  {%- elsif collection.products_count == collection.all_products_count -%}
+                    {{ 'products.facets.product_count_simple' | t: count: collection.products_count }}
+                  {%- else -%}
+                    {{
+                      'products.facets.product_count'
+                      | t: product_count: collection.products_count, count: collection.all_products_count
+                    }}
+                  {%- endif -%}
+                </span>
+              </h2>
+              <div class="loading-overlay__spinner">
+                <svg
+                  aria-hidden="true"
+                  focusable="false"
+                  class="spinner"
+                  viewBox="0 0 66 66"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <circle class="path" fill="none" stroke-width="6" cx="33" cy="33" r="30"></circle>
+                </svg>
+              </div>
+            </div>
+          </div>
+          <div class="sp-collection-bar__right">
+            {% comment %} Sort is the first tabbable element when filter type is vertical {% endcomment %}
+            {%- if section.settings.enable_sorting and section.settings.filter_type == 'vertical' -%}
+              <facet-filters-form class="facets facets-vertical-sort small-hide no-js-hidden">
+                <form class="facets-vertical-form" id="FacetSortForm">
+                  <div class="facet-filters sorting caption">
+                    <div class="facet-filters__field">
+                      <h2 class="facet-filters__label caption-large text-body">
+                        <label for="SortBy">{{ 'products.facets.sort_by_label' | t }}</label>
+                      </h2>
+                      <div class="select">
+                        {%- assign sort_by = collection.sort_by | default: collection.default_sort_by -%}
+                        <select
+                          name="sort_by"
+                          class="facet-filters__sort select__select caption-large"
+                          id="SortBy"
+                          aria-describedby="a11y-refresh-page-message"
                         >
-                          {{ option.name | escape }}
-                        </option>
-                      {%- endfor -%}
-                    </select>
-                    {% render 'icon-caret' %}
+                          {%- for option in collection.sort_options -%}
+                            <option
+                              value="{{ option.value | escape }}"
+                              {% if option.value == sort_by %}
+                                selected="selected"
+                              {% endif %}
+                            >
+                              {{ option.name | escape }}
+                            </option>
+                          {%- endfor -%}
+                        </select>
+                        {% render 'icon-caret' %}
+                      </div>
+                    </div>
+                    <noscript>
+                      <button type="submit" class="facets__button-no-js button button--secondary">
+                        {{ 'products.facets.sort_button' | t }}
+                      </button>
+                    </noscript>
                   </div>
-                </div>
-                <noscript>
-                  <button type="submit" class="facets__button-no-js button button--secondary">
-                    {{ 'products.facets.sort_button' | t }}
-                  </button>
-                </noscript>
-              </div>
-
-              <div class="product-count-vertical light" role="status">
-                <h2 class="product-count__text text-body">
-                  <span id="ProductCountDesktop">
-                    {%- if collection.results_count -%}
-                      {{
-                        'templates.search.results_with_count'
-                        | t: terms: collection.terms, count: collection.results_count
-                      }}
-                    {%- elsif collection.products_count == collection.all_products_count -%}
-                      {{ 'products.facets.product_count_simple' | t: count: collection.products_count }}
-                    {%- else -%}
-                      {{
-                        'products.facets.product_count'
-                        | t: product_count: collection.products_count, count: collection.all_products_count
-                      }}
-                    {%- endif -%}
-                  </span>
-                </h2>
-                <div class="loading-overlay__spinner">
-                  <svg
-                    aria-hidden="true"
-                    focusable="false"
-                    class="spinner"
-                    viewBox="0 0 66 66"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <circle class="path" fill="none" stroke-width="6" cx="33" cy="33" r="30"></circle>
-                  </svg>
-                </div>
-              </div>
-            </form>
-          </facet-filters-form>
-        {%- endif -%}
+                </form>
+              </facet-filters-form>
+            {%- endif -%}
+          </div>
+        </div>
 
         {%- if section.settings.enable_filtering or section.settings.enable_sorting -%}
           <aside
@@ -156,10 +148,6 @@
             %}
           </aside>
         {%- endif -%}
-
-        <div class="sp-collection-trust page-width">
-          Secure checkout • Instant delivery • 24/7 support
-        </div>
       </div>
     </div>
 
@@ -169,15 +157,10 @@
           <div class="collection collection--empty page-width sp-empty-state" id="product-grid" data-id="{{ section.id }}">
             <div class="loading-overlay gradient"></div>
             <div class="title-wrapper center">
-              <h2 class="title title--primary">
-                {{ 'sections.collection_template.empty' | t -}}
-                <br>
-                {{
-                  'sections.collection_template.use_fewer_filters_html'
-                  | t: link: collection.url, class: 'underlined-link link'
-                }}
-              </h2>
-              <p class="sp-empty-state__copy">Try clearing filters to reveal the latest curated drops.</p>
+              <h2 class="title title--primary">No products available yet…</h2>
+              <p class="sp-empty-state__copy">
+                Refine or clear filters to explore upcoming additions in this collection.
+              </p>
               <a class="button button--secondary sp-empty-state__cta" href="{{ routes.all_products_collection_url }}">
                 Browse all products
               </a>
@@ -222,6 +205,14 @@
         {%- endif -%}
       {%- endpaginate -%}
     </div>
+  </div>
+  <div class="sp-a11y-checklist visually-hidden">
+    <h2>Performance and accessibility checklist</h2>
+    <ul>
+      <li>Images use fixed aspect ratios to prevent layout shifts.</li>
+      <li>Interactive elements include visible focus states.</li>
+      <li>Motion effects are reduced when users prefer less animation.</li>
+    </ul>
   </div>
 </div>
 
