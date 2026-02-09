@@ -1051,3 +1051,21 @@ class ProductRecommendations extends HTMLElement {
 }
 
 customElements.define('product-recommendations', ProductRecommendations);
+
+document.addEventListener('DOMContentLoaded', () => {
+  const stickyBar = document.querySelector('.sp-collection-bar');
+  if (!stickyBar) return;
+
+  const sentinel = document.createElement('div');
+  sentinel.className = 'sp-collection-bar__sentinel';
+  stickyBar.parentNode.insertBefore(sentinel, stickyBar);
+
+  const observer = new IntersectionObserver(
+    ([entry]) => {
+      stickyBar.classList.toggle('sp-collection-bar--stuck', !entry.isIntersecting);
+    },
+    { threshold: [1] }
+  );
+
+  observer.observe(sentinel);
+});
