@@ -32,7 +32,7 @@
       assign ratio = 1
     endif
   -%}
-  <div class="card-wrapper product-card-wrapper underline-links-hover">
+  <div class="card-wrapper product-card-wrapper underline-links-hover sp-product-card">
     <div
       class="
         card
@@ -152,6 +152,11 @@
               {{ card_product.title | escape }}
             </a>
           </h3>
+          <div class="sp-product-meta" aria-label="Product attributes">
+            <span class="sp-chip">Digital</span>
+            <span class="sp-chip">Exclusive</span>
+            <span class="sp-chip">Instant access</span>
+          </div>
           <div class="card-information">
             {%- if show_vendor -%}
               <span class="visually-hidden">{{ 'accessibility.vendor' | t }}</span>
