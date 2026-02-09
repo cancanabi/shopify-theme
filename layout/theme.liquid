@@ -300,6 +300,16 @@
 
       .gradient{ background: transparent !important; }
 
+      .enterpage-background{
+        background: linear-gradient(180deg, #020617 0%, #031a46 55%, #020617 100%) !important;
+        min-height: 100vh;
+      }
+
+      body.enterpage-background .bgimg,
+      body.enterpage-background .pagebgimg{
+        background: linear-gradient(180deg, #020617 0%, #031a46 55%, #020617 100%) !important;
+      }
+
       @media screen and (max-width: 500px){
         .header__heading-logo { width: {{ settings.shop_logo_width_mobile }}px !important; }
       }
@@ -465,7 +475,7 @@
     {% endif %}
   </head>
 
-  <body class="gradient">
+  <body class="gradient{% if template == 'collection' %} enterpage-background{% endif %}">
     <div id="custom-cursor"></div>
 
     {%- comment -%} Enter Page / BG Sections müssen in den Body {%- endcomment -%}
