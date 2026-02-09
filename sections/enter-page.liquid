@@ -1,0 +1,1536 @@
+{% if section.settings.show_enter_page %}
+  <style>
+    /* =========================================================
+      ✅ ENTER PAGE – SAFE THEME HIDE (NO "NICHTS SICHTBAR" BUG)
+    ========================================================== */
+    header,
+    .footer,
+    .section-header,
+    .section-footer { display: none !important; }
+
+    .shopify-section { display: none !important; }
+
+    #shopify-section-{{ section.id }} { display: block !important; }
+
+    #MainContent,
+    main#MainContent { display: block !important; }
+
+    /* Theme Fonts NICHT kaputt machen */
+    .wrapper,
+    .wrapper * {
+      font-family: inherit;
+      letter-spacing: inherit;
+    }
+
+    /* =========================================================
+      Animations
+    ========================================================== */
+    .scale-in-center {
+      -webkit-animation: scale-in-center 1s cubic-bezier(.25,.46,.45,.94) both;
+      animation: scale-in-center 1s cubic-bezier(.25,.46,.45,.94) both;
+    }
+    @-webkit-keyframes scale-in-center {
+      0% { -webkit-transform: scale(0); transform: scale(0); opacity: 1; }
+      100% { -webkit-transform: scale(1); transform: scale(1); opacity: 1; }
+    }
+    @keyframes scale-in-center {
+      0% { -webkit-transform: scale(0); transform: scale(0); opacity: 1; }
+      100% { -webkit-transform: scale(1); transform: scale(1); opacity: 1; }
+    }
+
+    .fade-in {
+      -webkit-animation: fade-in 4s cubic-bezier(.39,.575,.565,1.000) both;
+      animation: fade-in 4s cubic-bezier(.39,.575,.565,1.000) both;
+    }
+    @-webkit-keyframes fade-in { 0% { opacity: 0; } 100% { opacity: 1; } }
+    @keyframes fade-in { 0% { opacity: 0; } 100% { opacity: 1; } }
+
+    /* =========================================================
+      Base layout
+    ========================================================== */
+    body, html {
+      height: 100vh;
+      width: 100vw;
+      overflow: hidden;
+      padding: 0 !important;
+      margin: 0 !important;
+    }
+
+    .wrapper {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+
+      position: fixed;
+      inset: 0;
+      width: 100vw;
+      height: 100vh;
+
+      overflow: hidden;
+      z-index: 999999 !important;
+
+      background-repeat: no-repeat;
+      background-size: cover;
+      background-position: center center;
+
+      {% if section.settings.enter_background_image %}
+        background-image: url({{ section.settings.enter_background_image | img_url: 'master' }});
+      {% endif %}
+    }
+
+    .wrapper { position: relative; }
+
+    #enter-canvas{
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+      pointer-events: none;
+      display: block;
+    }
+
+    .logo-container,
+    .menu-container{
+      position: relative;
+      z-index: 6;
+    }
+
+    {% if section.settings.enter_background_image_mobile %}
+    @media screen and (max-width: 500px){
+      .wrapper{
+        background-image: url({{ section.settings.enter_background_image_mobile | img_url: 'master' }});
+      }
+    }
+    {% endif %}
+
+    /* =========================================================
+      Logo
+    ========================================================== */
+    .logo-container{
+      margin-bottom: 30px;
+      position: absolute;
+      top: 2vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    @media screen and (max-width: 450px){
+      .logo-container{ top: {{ section.settings.logo_container_top_mobile }}vh; }
+    }
+
+    .logo_enter{
+      width: {{ section.settings.logoenter_size }}px;
+      animation: logoFloatZoom 3.2s ease-in-out infinite;
+      transform-origin: center;
+      will-change: transform;
+      display: block;
+    }
+    @media screen and (max-width: 450px){
+      .logo_enter{ width: {{ section.settings.logoenter_size_mobile }}px; }
+    }
+    @keyframes logoFloatZoom{
+      0%   { transform: translateY(0) scale(1); }
+      50%  { transform: translateY(-6px) scale(1.06); }
+      100% { transform: translateY(0) scale(1); }
+    }
+
+    /* =========================================================
+      Menu Container
+    ========================================================== */
+    .menu-container{
+      position: relative; /* ✅ FIX: safe anchor (ändert nichts am Layout) */
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      z-index: 6;
+      transform: translateY(70px);
+    }
+    @media screen and (max-width: 450px){
+      .menu-container{ transform: translateY(90px); }
+    }
+
+    .enter-button{ text-align: center; }
+
+    /* =========================================================
+      ✅ LIQUID GLASS BOX (jetzt Container)
+      -> Video füllt den kompletten Kasten, Text darüber
+    ========================================================== */
+    .menu-glass{
+      position: relative;
+      border-radius: 22px;
+      overflow: hidden;
+      isolation: isolate;
+
+      width: fit-content;
+      transform: translateY(-30px);
+
+      min-height: {{ section.settings.menu_box_min_height }}px;
+
+      background: rgba(6, 15, 35, 0.28);
+      backdrop-filter: blur(16px) saturate(170%);
+      -webkit-backdrop-filter: blur(16px) saturate(170%);
+
+      border: 1px solid rgba(255,255,255,0.16);
+
+      box-shadow:
+        0 20px 70px rgba(0,0,0,0.45),
+        0 0 40px rgba(56,189,248,0.22),
+        0 0 120px rgba(99,102,241,0.14),
+        inset 0 1px 0 rgba(255,255,255,0.20);
+    }
+
+    @media screen and (max-width: 450px){
+      .menu-glass{
+        max-width: 250px;
+        width: fit-content;
+        margin-left: auto;
+        margin-right: auto;
+      }
+    }
+
+    .menu-glass .menu-video-bg{
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 1;
+      pointer-events: none;
+      overflow: hidden;
+    }
+    .menu-glass .menu-video-bg video{
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      opacity: .95;
+    }
+    .menu-glass .menu-video-bg::after{
+      content:"";
+      position:absolute;
+      inset:0;
+      background: rgba(6,15,35,0.35);
+      z-index: 2;
+    }
+
+    .menu-glass::before{
+      content:"";
+      position:absolute;
+      inset:-2px;
+      border-radius: inherit;
+      background:
+        radial-gradient(circle at 20% 15%, rgba(56,189,248,0.35), transparent 55%),
+        radial-gradient(circle at 85% 85%, rgba(99,102,241,0.28), transparent 60%),
+        radial-gradient(circle at 55% 45%, rgba(14,165,233,0.18), transparent 55%);
+      filter: blur(14px);
+      opacity: .9;
+      z-index: 3;
+      pointer-events: none;
+    }
+
+    .menu-glass::after{
+      content:"";
+      position:absolute;
+      top:-40%;
+      left:-60%;
+      width: 42%;
+      height: 180%;
+      transform: rotate(18deg);
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,.18), transparent);
+      animation: menuShimmer 2.8s ease-in-out infinite;
+      opacity: .85;
+      z-index: 4;
+      pointer-events: none;
+    }
+
+    @keyframes menuShimmer{
+      0%{ left:-60%; }
+      100%{ left:140%; }
+    }
+
+    .menu-list{
+      list-style: none;
+      text-align: center;
+
+      position: relative;
+      padding: 22px 26px;
+      margin: 0;
+
+      background: transparent;
+      z-index: 6;
+    }
+
+    .menu-item{
+      margin-bottom: {{ section.settings.enter_menu_space }}px;
+      text-align: {{ section.settings.menu_list_alignment }};
+    }
+    .menu-item:last-child{ margin-bottom: 0; }
+
+    .menu-link{
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+
+      font-size: {{ section.settings.menu_font_size }}px;
+      font-weight: bold;
+      color: {{ section.settings.menu_text_color }} !important;
+      text-decoration: none !important;
+
+      padding: 10px 18px;
+      line-height: 1.2;
+      text-transform: {{ section.settings.menu_text_transform }};
+
+      border-radius: 14px;
+      position: relative;
+      outline: none;
+
+      transition:
+        transform .18s ease,
+        background-color .18s ease,
+        box-shadow .18s ease,
+        filter .18s ease;
+      -webkit-tap-highlight-color: transparent;
+
+      {% if section.settings.show_text_glow %}
+        -webkit-animation: pulse 1.5s ease-in-out infinite alternate;
+        animation: pulse 1.5s ease-in-out infinite alternate;
+        -webkit-backface-visibility: hidden;
+      {% endif %}
+    }
+
+    .menu-link::before{
+      content:"";
+      position:absolute;
+      inset: -6px -10px;
+      border-radius: 18px;
+      background:
+        radial-gradient(circle at 30% 25%, rgba(56,189,248,.30), transparent 60%),
+        radial-gradient(circle at 70% 75%, rgba(99,102,241,.22), transparent 60%);
+      filter: blur(10px);
+      opacity: 0;
+      transition: opacity .18s ease;
+      pointer-events: none;
+      z-index: -1;
+    }
+
+    .menu-link:hover,
+    .menu-link:focus-visible{
+      background: rgba(255,255,255,.10);
+      box-shadow:
+        0 14px 44px rgba(0,0,0,.45),
+        0 0 0 1px rgba(255,255,255,.10) inset,
+        0 0 18px rgba(56,189,248,.25);
+      transform: translateY(-1px);
+    }
+    .menu-link:hover::before,
+    .menu-link:focus-visible::before{
+      opacity: 1;
+    }
+
+    .menu-link:active{
+      transform: translateY(0px) scale(.99);
+      filter: brightness(1.02);
+    }
+
+    {% if section.settings.enable_menu_highlight %}
+      .menu-list .menu-link:hover,
+      .menu-list .menu-link:focus-visible{
+        background: {{ section.settings.menu_highlight_color }} !important;
+      }
+    {% endif %}
+
+    /* =========================================================
+      Videos (Background Video – optional)
+    ========================================================== */
+    #bg-video_mobile{ display: none; }
+
+    {% if section.settings.show_video_bg %}
+      .wrapper{ background-color: transparent; }
+      #bg-video{
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        overflow: hidden;
+        z-index: -20;
+      }
+    {% endif %}
+
+    {% if section.settings.background_video_url_mobile %}
+    @media screen and (max-width: 500px){
+      .wrapper{ background-color: transparent; }
+      #bg-video{ display: none; }
+      #bg-video_mobile{
+        display: block;
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        overflow: hidden;
+        z-index: -20;
+      }
+    }
+    {% endif %}
+
+    {% if section.settings.show_two_bg %}
+      .wrapper{
+        background-image: url({{ section.settings.two_bg_first | img_url: 'master' }});
+        background-size: cover;
+        background-repeat: no-repeat;
+        background-position: center center;
+      }
+      #bg-video, #bg-video_mobile{ display: none; }
+
+      .two_bg_enter_button a{
+        display: inline-block;
+        padding: 10px 14px;
+        font-size: {{ section.settings.menu_font_size }}px;
+        font-weight: bold;
+        color: {{ section.settings.menu_text_color }} !important;
+        text-decoration: none;
+        text-transform: {{ section.settings.menu_text_transform }};
+        cursor: pointer;
+      }
+
+      .enter-button{ display: none; }
+    {% endif %}
+
+    /* =========================================================
+      Date/Time
+    ========================================================== */
+    #datetime{
+      width: 100%;
+      text-align: center;
+      font-size: {{ section.settings.date_time_size }}px;
+      margin: 0 !important;
+      color: {{ section.settings.date_time_color }} !important;
+    }
+
+    /* =========================================================
+      ✅ Socials – Blasen
+    ========================================================== */
+    .enterfooter{
+      margin-top: 16px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      position: relative;
+      z-index: 9999999;
+      pointer-events: auto;
+      opacity: 1;
+    }
+
+    .enterfooter .footer__list-social.list-unstyled.list-social{
+      position: static !important;
+      transform: none !important;
+      margin: 0 !important;
+      padding: 0 !important;
+
+      display: flex !important;
+      justify-content: center !important;
+      align-items: center !important;
+      gap: 16px !important;
+    }
+
+    .enterfooter .list-social__item{
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+    }
+
+    .enterfooter .list-social__link{
+      display: inline-flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      width: 44px !important;
+      height: 44px !important;
+      border-radius: 999px !important;
+
+      background: rgba(0,0,0,.28) !important;
+      border: 1px solid rgba(255,255,255,.14) !important;
+      backdrop-filter: blur(10px) !important;
+      -webkit-backdrop-filter: blur(10px) !important;
+
+      transition: box-shadow .2s ease, background .2s ease;
+      text-decoration: none !important;
+      line-height: 0 !important;
+    }
+
+    .enterfooter .list-social__link:hover{
+      background: rgba(0,0,0,.42) !important;
+      box-shadow:
+        0 14px 40px rgba(0,0,0,.45),
+        0 0 18px rgba(56,189,248,.35);
+    }
+
+    .enterfooter svg{
+      color: {{ section.settings.icons_color }} !important;
+      fill: currentColor !important;
+      stroke: currentColor !important;
+      display: block !important;
+    }
+    .enterfooter svg *{
+      fill: currentColor !important;
+      stroke: currentColor !important;
+    }
+
+    .enterfooter .list-social__link svg{
+      width: 24px !important;
+      height: 24px !important;
+      transform-origin: center;
+      transition: transform .2s ease;
+    }
+
+    .enterfooter .list-social__link:hover svg{
+      transform: scale(1.12);
+    }
+
+    .enterfooter a[href*="discord"] svg,
+    .enterfooter a[href*="discord.gg"] svg{
+      transform: scale(1.55);
+      transform-origin: center;
+    }
+    .enterfooter a[href*="discord"]:hover svg,
+    .enterfooter a[href*="discord.gg"]:hover svg{
+      transform: scale(1.70);
+    }
+
+    {% unless section.settings.show_enterfooter %}
+      .enterfooter{ display: none !important; }
+    {% endunless %}
+
+    /* =========================================================
+      ✅ Payment Icons – FIX (NICHT MEHR IM LAYOUT, daher keine Verschiebung)
+      -> sitzt kurz vor "Scroll down"
+    ========================================================== */
+    .enter-payments{
+      position: fixed;
+      left: 50%;
+      bottom: 9vh;
+      transform: translateX(-50%);
+
+      display: inline-flex;
+      justify-content: center;
+      align-items: center;
+      gap: 12px;
+
+      flex-wrap: nowrap;
+      white-space: nowrap;
+
+      z-index: 99999998;
+      pointer-events: auto;
+    }
+    @media screen and (max-width: 450px){
+      .enter-payments{
+        gap: 8px;
+        bottom: 10vh;
+      }
+
+      .pay-bubble{
+        width: 46px;
+        height: 32px;
+      }
+    }
+
+    .pay-bubble{
+      width: 52px;
+      height: 36px;
+      border-radius: 14px;
+
+      display: flex;
+      justify-content: center;
+      align-items: center;
+
+      background: rgba(0,0,0,.28);
+      border: 1px solid rgba(255,255,255,.14);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+
+      box-shadow:
+        0 14px 40px rgba(0,0,0,.45),
+        inset 0 1px 0 rgba(255,255,255,.10);
+
+      transition: transform .2s ease, box-shadow .2s ease;
+    }
+
+    .pay-bubble:hover{
+      transform: translateY(-2px) scale(1.03);
+      box-shadow:
+        0 18px 60px rgba(0,0,0,.55),
+        0 0 18px rgba(56,189,248,.25);
+    }
+
+    .pay-bubble img{
+      max-width: 72%;
+      max-height: 72%;
+      object-fit: contain;
+      display: block;
+      filter: brightness(1.05);
+    }
+
+    /* =========================================================
+      Copyright
+    ========================================================== */
+    .enter-copy{
+      display:flex;
+      margin-top: 10px;
+      flex-direction:column;
+      text-align:center;
+    }
+
+    small.copyright__content,
+    small.copyright__content a{
+      color: {{ section.settings.copy_text_color }} !important;
+    }
+
+    /* =========================================================
+      Reveal transitions
+    ========================================================== */
+    :root{ --ease-premium: cubic-bezier(.22,.61,.36,1); }
+
+    .logo-container,
+    .menu-container{
+      transition: transform 650ms var(--ease-premium), opacity 450ms ease, filter 650ms var(--ease-premium);
+      will-change: transform, opacity, filter;
+    }
+
+    .wrapper.is-reveal .logo-container,
+    .wrapper.is-reveal .menu-container{
+      opacity: 0;
+      transform: translateY(-18px) scale(.985);
+      filter: blur(6px);
+      pointer-events: none;
+    }
+
+    .wrapper.is-reveal .enterfooter{
+      opacity: 0 !important;
+      transform: translateY(18px) !important;
+      pointer-events: none !important;
+      visibility: hidden !important;
+    }
+
+    /* =========================================================
+      Scroll panel + campaign (bleibt wie gehabt)
+    ========================================================== */
+    .enter-scroll-panel{
+      position: absolute;
+      inset: 0;
+      z-index: 4;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transform: translateY(110%);
+      opacity: 0;
+      transition: transform 800ms var(--ease-premium), opacity 450ms ease;
+      pointer-events: none;
+    }
+
+    .enter-scroll-panel.is-open{
+      transform: translateY(0);
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .enter-scroll-inner{
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 14px;
+      padding: clamp(16px, 3vw, 52px);
+    }
+
+    .enter-campaign-stage{
+      position: relative;
+      width: min(980px, 92vw);
+      height: min(78vh, 820px);
+      display: grid;
+      place-items: center;
+
+      --bottle-w: {{ section.settings.bottle_w }}px;
+      --tilt: {{ section.settings.bottle_tilt }}deg;
+      --move: {{ section.settings.bottle_move }}px;
+    }
+
+    .enter-campaign-stage .enter-campaign-img{
+      position: absolute;
+      inset: 0;
+      margin: auto;
+      max-width: 100%;
+      max-height: 100%;
+      width: auto;
+      height: auto;
+      display: block;
+
+      border-radius: 22px;
+      box-shadow: 0 26px 90px rgba(0,0,0,.55);
+
+      transition: transform 900ms var(--ease-premium), opacity 450ms ease, filter 650ms var(--ease-premium);
+      will-change: transform, opacity, filter;
+      cursor: pointer;
+      z-index: 1;
+    }
+
+    .enter-campaign-img--1{ opacity: 1; transform: translateY(0) scale(1); filter: blur(0px); }
+
+    .enter-campaign-img--2{
+      opacity: 0;
+      pointer-events: none;
+      transform: translateY(12px) scale(.985);
+      filter: blur(6px);
+    }
+
+    .enter-scroll-panel.step-2 .enter-campaign-img--1{
+      opacity: 1;
+      transform: translateX(-34vw) scale(.42);
+      filter: blur(0px);
+    }
+
+    .enter-scroll-panel.step-2 .enter-campaign-img--2{
+      opacity: 1;
+      pointer-events: auto;
+      transform: translateX(0) scale(1);
+      filter: blur(0px);
+    }
+
+    @media (max-width: 500px){
+      .enter-scroll-panel.step-2 .enter-campaign-img--1{ transform: translateX(-24vw) scale(.92); }
+    }
+
+    .enter-scroll-cta{
+      font-size: 12px;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+      opacity: .78;
+      user-select: none;
+      text-align: center;
+    }
+
+    .enter-scroll-cta--pill{
+      position: absolute;
+      left: 50%;
+      bottom: 20%;
+      transform: translateX(-50%);
+      z-index: 10000;
+      pointer-events: auto;
+
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+
+      padding: 12px 18px;
+      border-radius: 999px;
+
+      background: rgba(0,0,0,.50);
+      border: 1px solid rgba(255,255,255,.18);
+      backdrop-filter: blur(10px);
+
+      font-size: 12px;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+
+      color: #fff;
+      opacity: .98;
+
+      box-shadow:
+        0 18px 60px rgba(0,0,0,.45),
+        0 0 0 1px rgba(255,255,255,.06) inset;
+
+      animation: ctaFloat 1.8s var(--ease-premium) infinite;
+      cursor: pointer;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+      outline: none;
+      overflow: hidden;
+    }
+
+    .enter-scroll-cta--pill .cta-arrow{
+      display: inline-block;
+      animation: ctaArrow 1.2s var(--ease-premium) infinite;
+      opacity: .92;
+      line-height: 1;
+    }
+
+    .enter-scroll-cta--pill:before{
+      content:"";
+      position:absolute;
+      inset:-2px;
+      border-radius: inherit;
+      background:
+        radial-gradient(circle at 30% 20%, rgba(56,189,248,.35), transparent 55%),
+        radial-gradient(circle at 70% 80%, rgba(99,102,241,.25), transparent 60%);
+      filter: blur(10px);
+      opacity: .65;
+      z-index:-1;
+      pointer-events: none;
+    }
+
+    .enter-scroll-cta--pill:after{
+      content:"";
+      position:absolute;
+      top:-40%;
+      left:-60%;
+      width: 40%;
+      height: 180%;
+      transform: rotate(18deg);
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,.22), transparent);
+      animation: ctaShimmer 2.6s ease-in-out infinite;
+      pointer-events: none;
+    }
+
+    @keyframes ctaFloat{
+      0%,100%{ transform: translateX(-50%) translateY(0); }
+      50%{ transform: translateX(-50%) translateY(8px); }
+    }
+    @keyframes ctaArrow{
+      0%,100%{ transform: translateX(0); }
+      50%{ transform: translateX(6px); }
+    }
+    @keyframes ctaShimmer{
+      0%{ left:-60%; }
+      100%{ left:140%; }
+    }
+
+    .enter-scroll-hint{
+      position: absolute;
+      left: 50%;
+      bottom: 6%;
+      transform: translateX(-50%);
+      z-index: 6;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+      opacity: .78;
+      user-select: none;
+      transition: opacity 280ms ease, transform 280ms ease;
+      pointer-events: none;
+    }
+
+    .enter-scroll-hint .hint-arrow{
+      font-size: 16px;
+      line-height: 1;
+      animation: hintBounce 1.6s var(--ease-premium) infinite;
+      opacity: .9;
+    }
+
+    @keyframes hintBounce{
+      0%,100%{ transform: translateY(0); }
+      50%{ transform: translateY(6px); }
+    }
+
+    .wrapper.is-reveal .enter-scroll-hint{
+      opacity: 0;
+      transform: translateX(-50%) translateY(10px);
+    }
+
+    .enter-campaign-video{
+      position: absolute;
+      inset: 0;
+      margin: auto;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 22px;
+      box-shadow: 0 26px 90px rgba(0,0,0,.55);
+
+      opacity: 0;
+      pointer-events: none;
+      transform: scale(.985);
+      transition: opacity 700ms ease, transform 700ms ease;
+      z-index: 3;
+    }
+    .enter-scroll-panel.step-3 .enter-campaign-video{
+      opacity: 1;
+      transform: scale(1);
+      pointer-events: auto;
+    }
+
+    .bottle-hover-wrap{
+      position: absolute;
+      width: var(--bottle-w);
+      transform: translate(-50%, -50%);
+      transform-style: preserve-3d;
+      perspective: 900px;
+      z-index: 6;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 160ms ease;
+      will-change: opacity, left, top, transform;
+      left: {{ section.settings.bottle_x }}%;
+      top: {{ section.settings.bottle_y }}%;
+    }
+
+    .enter-scroll-panel.is-open:not(.step-2):not(.step-3) .bottle-hover-wrap{ opacity: 1; }
+
+    .bottle-hover-img{
+      width: 100%;
+      height: auto;
+      display: block;
+      transform-style: preserve-3d;
+      will-change: transform;
+      user-select: none;
+      -webkit-user-drag: none;
+      filter:
+        drop-shadow(0 26px 60px rgba(0,0,0,.50))
+        drop-shadow(0 6px 18px rgba(0,0,0,.30));
+      transition: transform 120ms ease-out;
+    }
+
+    @-webkit-keyframes pulse {
+      from {
+        text-shadow:
+          0 0 0px {{ section.settings.menu_text_glow_color }},
+          0 0 0px {{ section.settings.menu_text_glow_color }},
+          0 0 0px {{ section.settings.menu_text_glow_color }},
+          0 0 0px {{ section.settings.menu_text_glow_color }};
+      }
+      to {
+        text-shadow:
+          0 0 0px {{ section.settings.menu_text_glow_color }},
+          0 0 10px {{ section.settings.menu_text_glow_color }},
+          0 0 15px {{ section.settings.menu_text_glow_color }},
+          0 0 35px {{ section.settings.menu_text_glow_color }};
+      }
+    }
+    @keyframes pulse {
+      from {
+        text-shadow:
+          0 0 0px {{ section.settings.menu_text_glow_color }},
+          0 0 0px {{ section.settings.menu_text_glow_color }},
+          0 0 0px {{ section.settings.menu_text_glow_color }},
+          0 0 0px {{ section.settings.menu_text_glow_color }};
+      }
+      to {
+        text-shadow:
+          0 0 0px {{ section.settings.menu_text_glow_color }},
+          0 0 10px {{ section.settings.menu_text_glow_color }},
+          0 0 15px {{ section.settings.menu_text_glow_color }},
+          0 0 35px {{ section.settings.menu_text_glow_color }};
+      }
+    }
+  </style>
+
+  <div class="wrapper">
+    <canvas id="enter-canvas"></canvas>
+
+    <div class="logo-container {% if section.settings.logo_animation != 'none' %}{{ section.settings.logo_animation }}{% endif %}">
+      {% if section.settings.logo_image %}
+        <img class="logo_enter" src="{{ section.settings.logo_image | img_url: 'master' }}" alt="Logo">
+      {% endif %}
+
+      {% if section.settings.add_date_time %}
+        <p id="datetime"></p>
+      {% endif %}
+    </div>
+
+    {% if section.settings.show_video_bg %}
+      <video autoplay loop muted playsinline id="bg-video">
+        <source src="{{ section.settings.background_video_url }}" type="video/mp4">
+      </video>
+      <video autoplay loop muted playsinline id="bg-video_mobile">
+        <source src="{{ section.settings.background_video_url_mobile }}" type="video/mp4">
+      </video>
+    {% endif %}
+
+    <div class="menu-container">
+      {% if section.settings.show_enter_button %}
+        <div class="enter-button">
+          <a href="/collections/all">{{ section.settings.enter_button_text }}</a>
+        </div>
+      {% else %}
+
+        <div class="menu-glass">
+          {% if section.settings.menu_video_url != blank %}
+            <div class="menu-video-bg">
+              <video autoplay muted loop playsinline preload="auto">
+                <source src="{{ section.settings.menu_video_url }}" type="video/mp4">
+              </video>
+            </div>
+          {% endif %}
+
+          <ul class="menu-list">
+            {% assign menu_handle = section.settings.home_nav %}
+            {% for link in linklists[menu_handle].links %}
+              <li class="menu-item">
+                <a class="menu-link" href="{{ link.url }}">{{ link.title }}</a>
+              </li>
+            {% endfor %}
+          </ul>
+        </div>
+
+      {% endif %}
+
+      {% if section.settings.show_two_bg %}
+        <div class="two_bg_enter_button" style="margin-top: 14px;">
+          <a>{{ section.settings.two_bg_enter_button_text }}</a>
+        </div>
+      {% endif %}
+
+      <div class="enterfooter">
+        <ul class="footer__list-social list-unstyled list-social">
+          {%- if settings.social_facebook_link != blank -%}
+            <li class="list-social__item">
+              <a href="{{ settings.social_facebook_link }}" class="link list-social__link">
+                {%- render 'icon-facebook' -%}
+                <span class="visually-hidden">{{ 'general.social.links.facebook' | t }}</span>
+              </a>
+            </li>
+          {%- endif -%}
+
+          {%- if settings.social_instagram_link != blank -%}
+            <li class="list-social__item">
+              <a href="{{ settings.social_instagram_link }}" class="link list-social__link">
+                {%- render 'icon-instagram' -%}
+                <span class="visually-hidden">{{ 'general.social.links.instagram' | t }}</span>
+              </a>
+            </li>
+          {%- endif -%}
+
+          {%- if settings.social_youtube_link != blank -%}
+            <li class="list-social__item">
+              <a href="{{ settings.social_youtube_link }}" class="link list-social__link">
+                {%- render 'icon-youtube' -%}
+                <span class="visually-hidden">{{ 'general.social.links.youtube' | t }}</span>
+              </a>
+            </li>
+          {%- endif -%}
+
+          {%- if settings.social_tiktok_link != blank -%}
+            <li class="list-social__item">
+              <a href="{{ settings.social_tiktok_link }}" class="link list-social__link">
+                {%- render 'icon-tiktok' -%}
+                <span class="visually-hidden">{{ 'general.social.links.tiktok' | t }}</span>
+              </a>
+            </li>
+          {%- endif -%}
+
+          {%- if settings.social_twitter_link != blank -%}
+            <li class="list-social__item">
+              <a href="{{ settings.social_twitter_link }}" class="link list-social__link">
+                {%- render 'icon-twitter' -%}
+                <span class="visually-hidden">{{ 'general.social.links.twitter' | t }}</span>
+              </a>
+            </li>
+          {%- endif -%}
+
+          {%- if settings.social_pinterest_link != blank -%}
+            <li class="list-social__item">
+              <a href="{{ settings.social_pinterest_link }}" class="link list-social__link">
+                {%- render 'icon-pinterest' -%}
+                <span class="visually-hidden">{{ 'general.social.links.pinterest' | t }}</span>
+              </a>
+            </li>
+          {%- endif -%}
+
+          {%- if settings.social_snapchat_link != blank -%}
+            <li class="list-social__item">
+              <a href="{{ settings.social_snapchat_link }}" class="link list-social__link">
+                {%- render 'icon-snapchat' -%}
+                <span class="visually-hidden">{{ 'general.social.links.snapchat' | t }}</span>
+              </a>
+            </li>
+          {%- endif -%}
+
+          {%- if settings.social_tumblr_link != blank -%}
+            <li class="list-social__item">
+              <a href="{{ settings.social_tumblr_link }}" class="link list-social__link">
+                {%- render 'icon-tumblr' -%}
+                <span class="visually-hidden">{{ 'general.social.links.tumblr' | t }}</span>
+              </a>
+            </li>
+          {%- endif -%}
+
+          {%- if settings.social_vimeo_link != blank -%}
+            <li class="list-social__item">
+              <a href="{{ settings.social_vimeo_link }}" class="link list-social__link">
+                {%- render 'icon-vimeo' -%}
+                <span class="visually-hidden">{{ 'general.social.links.vimeo' | t }}</span>
+              </a>
+            </li>
+          {%- endif -%}
+
+          <li class="list-social__item">
+            <a href="https://discord.gg/3fwSzg9T37" target="_blank" rel="noopener noreferrer" class="link list-social__link">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 127.14 96.36" aria-hidden="true" role="img">
+                <path d="M107.7 8.07A105.15 105.15 0 0 0 81.47 0a72.06 72.06 0 0 0-3.36 6.83A97.68 97.68 0 0 0 49 6.83 72.37 72.37 0 0 0 45.64 0a105.89 105.89 0 0 0-26.27 8.09C2.79 32.65-1.36 56.6.54 80.21a105.73 105.73 0 0 0 32.17 16.15 77.7 77.7 0 0 0 6.89-11.11 67.4 67.4 0 0 1-10.85-5.18c.91-.66 1.8-1.35 2.66-2.06a75.57 75.57 0 0 0 64.32 0c.87.71 1.76 1.4 2.66 2.06a67.14 67.14 0 0 1-10.87 5.19 77.18 77.18 0 0 0 6.89 11.1 105.25 105.25 0 0 0 32.19-16.14c2.23-27.57-3.82-51.5-19.36-72.01ZM42.45 65.69c-6.18 0-11.2-5.67-11.2-12.65s4.95-12.66 11.2-12.66c6.27 0 11.28 5.69 11.2 12.66 0 6.98-4.95 12.65-11.2 12.65Zm42.24 0c-6.18 0-11.2-5.67-11.2-12.65s4.95-12.66 11.2-12.66c6.27 0 11.28 5.69 11.2 12.66 0 6.98-4.93 12.65-11.2 12.65Z"/>
+              </svg>
+              <span class="visually-hidden">Discord</span>
+            </a>
+          </li>
+        </ul>
+
+        <!-- ✅ Payment Icons (HIER nur URLs einsetzen) -->
+        <div class="enter-payments" aria-label="Payment methods">
+          <div class="pay-bubble"><img src="https://cdn.shopify.com/s/files/1/0990/9885/3723/files/paypal.png?v=1770344477" alt="PayPal"></div>
+          <div class="pay-bubble"><img src="https://cdn.shopify.com/s/files/1/0990/9885/3723/files/visa.png?v=1770344477" alt="Visa"></div>
+          <div class="pay-bubble"><img src="https://cdn.shopify.com/s/files/1/0990/9885/3723/files/logo.png?v=1770344477" alt="Mastercard"></div>
+          <div class="pay-bubble"><img src="https://cdn.shopify.com/s/files/1/0990/9885/3723/files/klarna-pink-square-logo-24364.png?v=1770344477" alt="Klarna"></div>
+        </div>
+
+        <div class="enter-copy">
+          <small class="copyright__content">
+            &copy; {{ 'now' | date: "%Y" }}, {{ shop.name | link_to: routes.root_url }}
+          </small>
+        </div>
+      </div>
+    </div>
+
+    <div class="enter-scroll-panel" id="enter-scroll-panel" aria-hidden="true">
+      <div class="enter-scroll-inner">
+        <div class="enter-campaign-stage" id="enter-campaign-stage">
+          <img class="enter-campaign-img enter-campaign-img--1"
+               id="enter-campaign-img-1"
+               src="{{ section.settings.enter_scroll_image | img_url: 'master' }}"
+               alt="Campaign Visual 1"
+               loading="lazy">
+
+          {% if section.settings.bottle_hover_image %}
+            <div class="bottle-hover-wrap" id="bottle-hover-wrap" aria-hidden="true">
+              <img id="bottle-hover-img"
+                   class="bottle-hover-img"
+                   src="{{ section.settings.bottle_hover_image | img_url: 'master' }}"
+                   alt="Bottle Hover"
+                   draggable="false">
+            </div>
+          {% endif %}
+
+          {% if section.settings.enter_scroll_image_2 %}
+            <img class="enter-campaign-img enter-campaign-img--2"
+                 id="enter-campaign-img-2"
+                 src="{{ section.settings.enter_scroll_image_2 | img_url: 'master' }}"
+                 alt="Campaign Visual 2"
+                 loading="lazy">
+          {% endif %}
+
+          {% if section.settings.campaign_video_url != blank %}
+            <video id="campaign-video"
+                   class="enter-campaign-video"
+                   muted
+                   playsinline
+                   loop
+                   preload="auto">
+              <source src="{{ section.settings.campaign_video_url }}" type="video/mp4">
+            </video>
+          {% endif %}
+        </div>
+      </div>
+
+      <div class="enter-scroll-cta enter-scroll-cta--pill" role="button" tabindex="0" aria-label="Enter shop">
+        <span class="cta-text">Tap / Click to enter</span>
+        <span class="cta-arrow" aria-hidden="true">→</span>
+      </div>
+    </div>
+
+    <div class="enter-scroll-hint" id="enter-scroll-hint">
+      <span class="hint-arrow">⌄</span>
+      <span>Scroll down</span>
+    </div>
+
+    {% if section.settings.show_enter_skip_button %}
+      <div style="position:absolute; right:2%; bottom:12%; z-index: 9999999;">
+        <a class="enter-skip-button" href="/collections/all"
+           style="text-decoration:none; color: {{ section.settings.enter_skip_button_color }}; font-size: {{ section.settings.enter_skip_button_size }}px;">
+          SKIP INTRO
+        </a>
+      </div>
+    {% endif %}
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      var wrapper = document.querySelector('.wrapper');
+      var enterButton = document.querySelector('.two_bg_enter_button');
+      var logoContainer = document.querySelector('.logo-container');
+      var menuContainer = document.querySelector('.menu-container');
+
+      {% if section.settings.show_two_bg %}
+      if (enterButton && wrapper) {
+        enterButton.addEventListener('click', function() {
+          wrapper.style.backgroundImage = "url({{ section.settings.two_bg_second | img_url: 'master' }})";
+
+          if (logoContainer) logoContainer.style.display = 'none';
+          if (menuContainer) menuContainer.style.display = 'none';
+
+          setTimeout(function() {
+            window.location.href = '/collections/all';
+          }, {{ section.settings.two_bg_seconds | default: 5 }} * 1000);
+        });
+      }
+      {% endif %}
+    });
+  </script>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      var wrapper = document.querySelector('.wrapper');
+      var panel   = document.getElementById('enter-scroll-panel');
+      var img1    = document.getElementById('enter-campaign-img-1');
+      var img2    = document.getElementById('enter-campaign-img-2');
+      var cta     = document.querySelector('.enter-scroll-cta--pill');
+      var video   = document.getElementById('campaign-video');
+
+      if (!wrapper || !panel) return;
+      if (!img1 || !img1.getAttribute('src')) return;
+
+      var hasStep2 = !!img2;
+      var hasStep3 = !!video;
+
+      var step = 0;
+      var lock = false;
+
+      function applyStep(){
+        panel.classList.toggle('is-open', step >= 1);
+        wrapper.classList.toggle('is-reveal', step >= 1);
+
+        panel.classList.toggle('step-2', step === 2);
+        panel.classList.toggle('step-3', step === 3);
+
+        panel.setAttribute('aria-hidden', step === 0 ? 'true' : 'false');
+
+        if (video){
+          if (step === 3){ video.play().catch(function(){}); }
+          else {
+            video.pause();
+            try { video.currentTime = 0; } catch(e) {}
+          }
+        }
+      }
+
+      function nextStep(){
+        if (lock) return;
+        lock = true;
+
+        if (step === 0) step = 1;
+        else if (step === 1 && hasStep2) step = 2;
+        else if (step === 2 && hasStep3) step = 3;
+
+        applyStep();
+        setTimeout(function(){ lock = false; }, 450);
+      }
+
+      function prevStep(){
+        if (lock) return;
+        lock = true;
+
+        if (step === 3) step = 2;
+        else if (step === 2) step = 1;
+        else if (step === 1) step = 0;
+
+        applyStep();
+        setTimeout(function(){ lock = false; }, 450);
+      }
+
+      function enterShop(){ window.location.href = '/collections/all'; }
+
+      window.addEventListener('wheel', function(e){
+        if (Math.abs(e.deltaY) < 6) return;
+        if (e.deltaY > 0) nextStep();
+        else prevStep();
+      }, { passive: true });
+
+      var startY = null;
+      window.addEventListener('touchstart', function(e){
+        startY = e.touches && e.touches[0] ? e.touches[0].clientY : null;
+      }, { passive: true });
+
+      window.addEventListener('touchmove', function(e){
+        if (startY == null) return;
+        var y = e.touches[0].clientY;
+        var dy = startY - y;
+        if (dy > 18) nextStep();
+        if (dy < -18) prevStep();
+      }, { passive: true });
+
+      window.addEventListener('touchend', function(){ startY = null; }, { passive: true });
+
+      window.addEventListener('keydown', function(e){
+        if (e.key === 'ArrowDown' || e.key === 'PageDown' || e.key === ' ') nextStep();
+        if (e.key === 'ArrowUp' || e.key === 'PageUp' || e.key === 'Escape') prevStep();
+      });
+
+      img1.addEventListener('click', enterShop);
+      if (img2) img2.addEventListener('click', enterShop);
+
+      if (cta){
+        cta.addEventListener('click', function(e){ e.preventDefault(); enterShop(); });
+        cta.addEventListener('keydown', function(e){
+          if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); enterShop(); }
+        });
+      }
+
+      panel.addEventListener('click', function(e){
+        if (e.target === panel) prevStep();
+      });
+
+      applyStep();
+    });
+  </script>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      var wrap = document.getElementById('bottle-hover-wrap');
+      var img  = document.getElementById('bottle-hover-img');
+      var stage = document.getElementById('enter-campaign-stage');
+      if (!wrap || !img || !stage) return;
+
+      function onMove(clientX, clientY){
+        var rect = stage.getBoundingClientRect();
+        var x = (clientX - rect.left) / rect.width;
+        var y = (clientY - rect.top) / rect.height;
+        x = Math.max(0, Math.min(1, x));
+        y = Math.max(0, Math.min(1, y));
+
+        var tilt = {{ section.settings.bottle_tilt | default: 14 }};
+        var move = {{ section.settings.bottle_move | default: 18 }};
+
+        var rx = (0.5 - y) * tilt;
+        var ry = (x - 0.5) * tilt;
+        var tx = (x - 0.5) * move;
+        var ty = (y - 0.5) * move;
+
+        img.style.transform = 'translate3d(' + tx + 'px,' + ty + 'px,0) rotateX(' + rx + 'deg) rotateY(' + ry + 'deg)';
+      }
+
+      window.addEventListener('mousemove', function(e){
+        onMove(e.clientX, e.clientY);
+      }, { passive: true });
+
+      window.addEventListener('touchmove', function(e){
+        if (!e.touches || !e.touches[0]) return;
+        onMove(e.touches[0].clientX, e.touches[0].clientY);
+      }, { passive: true });
+    });
+  </script>
+
+  <script>
+    function updateTime() {
+      var el = document.getElementById("datetime");
+      if (!el) return;
+
+      var today = new Date();
+      var date = today.toLocaleDateString().replace(/\./g, '/');
+      var hours = today.getHours();
+      var suffix = hours >= 12 ? 'PM' : 'AM';
+      hours = hours % 12 || 12;
+      var minutes = today.getMinutes();
+      var time = hours + ':' + (minutes < 10 ? '0' : '') + minutes + ' ' + suffix;
+
+      el.innerHTML = date + ' ' + time;
+    }
+    updateTime();
+    setInterval(updateTime, 1000);
+  </script>
+
+  <script>
+    (function () {
+      var canvas = document.getElementById('enter-canvas');
+      if (!canvas) return;
+
+      var ctx = canvas.getContext('2d', { alpha: true });
+      var particles = [];
+
+      function resize() {
+        var dpr = Math.max(1, window.devicePixelRatio || 1);
+        canvas.width = Math.floor(canvas.clientWidth * dpr);
+        canvas.height = Math.floor(canvas.clientHeight * dpr);
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      }
+
+      function createParticles() {
+        particles = [];
+        var w = canvas.clientWidth;
+        var h = canvas.clientHeight;
+        var count = Math.floor(Math.min(140, Math.max(70, w / 14)));
+        for (var i = 0; i < count; i++) {
+          particles.push({
+            x: Math.random() * w,
+            y: Math.random() * h,
+            r: Math.random() * 2 + 1,
+            vx: (Math.random() - 0.5) * 0.28,
+            vy: (Math.random() - 0.5) * 0.28
+          });
+        }
+      }
+
+      function drawBackground() {
+        var w = canvas.clientWidth;
+        var h = canvas.clientHeight;
+        var g = ctx.createLinearGradient(0, 0, 0, h);
+        g.addColorStop(0, '#020617');
+        g.addColorStop(0.55, '#031a46');
+        g.addColorStop(1, '#020617');
+        ctx.fillStyle = g;
+        ctx.fillRect(0, 0, w, h);
+      }
+
+      function tick() {
+        var w = canvas.clientWidth;
+        var h = canvas.clientHeight;
+
+        drawBackground();
+
+        for (var i = 0; i < particles.length; i++) {
+          var p = particles[i];
+          p.x += p.vx;
+          p.y += p.vy;
+
+          if (p.x < -10) p.x = w + 10;
+          if (p.x > w + 10) p.x = -10;
+          if (p.y < -10) p.y = h + 10;
+          if (p.y > h + 10) p.y = -10;
+
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+          ctx.fillStyle = 'rgba(56,189,248,0.80)';
+          ctx.fill();
+        }
+
+        requestAnimationFrame(tick);
+      }
+
+      function onResize() {
+        resize();
+        createParticles();
+      }
+
+      window.addEventListener('resize', onResize);
+
+      resize();
+      createParticles();
+      tick();
+    })();
+  </script>
+
+{% endif %}
+
+{% schema %}
+{
+  "name": "ENTER PAGE",
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "show_enter_page",
+      "info": "Enter page will replace the home page. If you want disable Enter page and Home Page, go to Theme Settings > Hide Home Page",
+      "label": "Show Enter Page",
+      "default": true
+    },
+
+    { "type": "header", "content": "Background Settings" },
+    { "type": "image_picker", "id": "enter_background_image", "label": "Background Image/Gif" },
+    { "type": "image_picker", "id": "enter_background_image_mobile", "label": "Mobile Background Image/Gif" },
+
+    { "type": "checkbox", "id": "show_video_bg", "info": "Background will be replaced with Video", "label": "Change Background With Video", "default": false },
+    { "type": "text", "id": "background_video_url", "label": "Video Url", "info": "Upload your video to Files and then paste the link here" },
+    { "type": "text", "id": "background_video_url_mobile", "label": "Mobile Video Url" },
+
+    { "type": "header", "content": "Menu Video (IN the Liquid Glass Box)" },
+    { "type": "text", "id": "menu_video_url", "label": "Menu Box Video URL (MP4)", "info": "Upload MP4 to Shopify Files and paste the direct URL here" },
+    { "type": "range", "id": "menu_box_min_height", "label": "Menu Box Height (px)", "min": 180, "max": 520, "step": 10, "default": 260 },
+
+    { "type": "image_picker", "id": "enter_scroll_image", "label": "Scroll-Down Campaign Image (Step 1)" },
+    { "type": "image_picker", "id": "enter_scroll_image_2", "label": "Scroll-Down Campaign Image (Step 2)" },
+
+    { "type": "text", "id": "campaign_video_url", "label": "Campaign Video URL (Step 3 Loop)", "info": "Upload MP4 to Shopify Files and paste the direct URL here" },
+
+    { "type": "header", "content": "Bottle Hover (Step 1 Overlay)" },
+    { "type": "image_picker", "id": "bottle_hover_image", "label": "Bottle PNG (transparent)" },
+
+    { "type": "range", "id": "bottle_x", "label": "Bottle X Position (%)", "min": 0, "max": 100, "step": 1, "default": 31 },
+    { "type": "range", "id": "bottle_y", "label": "Bottle Y Position (%)", "min": 0, "max": 100, "step": 1, "default": 52 },
+
+    { "type": "range", "id": "bottle_w", "label": "Bottle Width (px)", "min": 80, "max": 580, "step": 5, "default": 260 },
+
+    { "type": "range", "id": "bottle_tilt", "label": "3D Tilt Strength (deg)", "min": 4, "max": 30, "step": 1, "default": 14 },
+    { "type": "range", "id": "bottle_move", "label": "3D Move Strength (px)", "min": 4, "max": 40, "step": 1, "default": 18 },
+
+    { "type": "header", "content": "Logo Settings" },
+    { "type": "image_picker", "id": "logo_image", "label": "Logo Image/Gif", "info": "Note that this logo will only be displayed on the Enter Page, to select the logo for the actual website go to Theme Settings > Logo" },
+    { "type": "range", "id": "logoenter_size", "label": "PC Logo Size", "default": 100, "min": 100, "max": 500, "step": 10 },
+    { "type": "range", "id": "logoenter_size_mobile", "label": "Mobile Logo Size", "default": 100, "min": 100, "max": 500, "step": 10 },
+    { "type": "range", "id": "logo_container_top", "label": "PC Logo Position (indent from top)", "min": 0, "max": 50, "step": 1, "unit": "%", "default": 5 },
+    { "type": "range", "id": "logo_container_top_mobile", "label": "Mobile Logo Position (indent from top)", "min": 0, "max": 50, "step": 1, "unit": "%", "default": 5 },
+
+    {
+      "type": "radio",
+      "id": "logo_animation",
+      "label": "Logo Animation",
+      "options": [
+        { "value": "none", "label": "None" },
+        { "value": "fade-in", "label": "Fade in" },
+        { "value": "scale-in-center", "label": "Scale in" }
+      ],
+      "default": "none"
+    },
+
+    { "type": "checkbox", "id": "add_date_time", "label": "Add Date and Time", "info": "The date and time will appear below the logo.", "default": false },
+    { "type": "color", "id": "date_time_color", "label": "Date&Time Color", "default": "#D4D4D4" },
+    { "type": "range", "id": "date_time_size", "label": "Date&Time Font Size", "default": 13, "min": 5, "max": 33, "step": 1 },
+
+    { "type": "header", "content": "Menu Settings" },
+    { "type": "link_list", "id": "home_nav", "label": "Select Navigation" },
+    { "type": "range", "id": "menu_font_size", "label": "Menu Font Size", "default": 16, "min": 12, "max": 33, "step": 1 },
+    { "type": "range", "id": "enter_menu_space", "label": "Menu Spacing", "default": 14, "min": 0, "max": 50, "step": 1 },
+    { "type": "color", "id": "menu_text_color", "label": "Menu Text Color", "default": "#ffffff" },
+
+    {
+      "type": "select",
+      "id": "menu_text_transform",
+      "label": "Menu Text Transform",
+      "default": "capitalize",
+      "options": [
+        { "value": "uppercase", "label": "Uppercase" },
+        { "value": "lowercase", "label": "Lowercase" },
+        { "value": "capitalize", "label": "Capitalize" }
+      ]
+    },
+    {
+      "type": "select",
+      "id": "menu_list_alignment",
+      "label": "Menu Text Alignment",
+      "default": "center",
+      "options": [
+        { "value": "left", "label": "Left" },
+        { "value": "center", "label": "Center" },
+        { "value": "right", "label": "Right" }
+      ]
+    },
+
+    { "type": "checkbox", "id": "show_text_glow", "label": "Enable Text Glow", "default": false },
+    { "type": "color", "id": "menu_text_glow_color", "label": "Glow Color", "default": "#D4D4D4" },
+    { "type": "checkbox", "id": "enable_menu_highlight", "label": "Enable Menu Highlight", "info": "If you select a menu instead of enter button, links will have a background highlight on hover", "default": false },
+    { "type": "color", "id": "menu_highlight_color", "label": "Highlight color", "default": "#D4D4D4" },
+
+    { "type": "checkbox", "id": "show_enter_button", "label": "Change menu to custom button", "info": "The menu will be replaced with button with custom text", "default": false },
+    { "type": "text", "id": "enter_button_text", "label": "Button text", "default": "Enter" },
+
+    { "type": "header", "content": "Footer Settings" },
+    { "type": "checkbox", "id": "show_enterfooter", "info": "To add social links please go to Theme Settings at the bottom of this settings", "label": "Show Social icons", "default": true },
+    { "type": "color", "id": "icons_color", "label": "Social icons color", "default": "#ffffff" },
+    { "type": "color", "id": "copy_text_color", "label": "Copyright Text color", "default": "#ffffff" },
+
+    { "type": "checkbox", "id": "show_enter_skip_button", "label": "Show Skip Animation Button", "info": "A button will appear in the lower right corner.", "default": false },
+    { "type": "color", "id": "enter_skip_button_color", "label": "Skip button color", "default": "#D4D4D4" },
+    { "type": "range", "id": "enter_skip_button_size", "label": "Skip button size", "default": 16, "min": 10, "max": 35, "step": 1 },
+
+    { "type": "header", "content": "Click to Activate Background", "info": "Select two backgrounds, second replaces first on click." },
+    { "type": "checkbox", "id": "show_two_bg", "label": "Enable Click to Activate Background", "default": false },
+    { "type": "image_picker", "id": "two_bg_first", "label": "First Background Image/Gif" },
+    { "type": "image_picker", "id": "two_bg_second", "label": "Second Background Image/Gif" },
+    { "type": "text", "id": "two_bg_enter_button_text", "label": "Button text", "default": "Enter" },
+    { "type": "text", "id": "two_bg_seconds", "label": "Time to redirect", "default": "5", "info": "Seconds before redirect to /collections/all" }
+  ]
+}
+{% endschema %}
