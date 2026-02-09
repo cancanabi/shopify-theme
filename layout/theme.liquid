@@ -32,6 +32,7 @@
     <script src="{{ 'constants.js' | asset_url }}" defer="defer"></script>
     <script src="{{ 'pubsub.js' | asset_url }}" defer="defer"></script>
     <script src="{{ 'global.js' | asset_url }}" defer="defer"></script>
+    <script src="{{ 'welcome-popup.js' | asset_url }}" defer="defer"></script>
 
     {{ content_for_header }}
 
@@ -570,5 +571,6 @@
     {%- endif -%}
 
     {% section 'audio-player' %}
+    {% section 'welcome-popup' %}
   </body>
 </html>

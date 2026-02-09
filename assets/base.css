@@ -3114,3 +3114,77 @@ html, body{
 *{
   font-family: "Gully" !important;
 }
+
+/* =========================
+   WELCOME POPUP (TEST MODUS)
+========================= */
+.welcome-popup {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity 0.2s ease, visibility 0.2s ease;
+  z-index: 1000;
+}
+
+.welcome-popup.is-active {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+}
+
+.welcome-popup__overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+}
+
+.welcome-popup__modal {
+  position: relative;
+  z-index: 1;
+  width: min(90vw, 480px);
+  padding: 32px;
+  border-radius: 12px;
+  background: rgb(var(--color-base-background-1));
+  color: rgb(var(--color-base-text));
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.25);
+  text-align: center;
+}
+
+.welcome-popup__title {
+  margin: 0 0 12px;
+}
+
+.welcome-popup__text {
+  margin: 0 0 24px;
+}
+
+.welcome-popup__button {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.welcome-popup__close {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 36px;
+  height: 36px;
+  border: none;
+  border-radius: 50%;
+  background: transparent;
+  color: currentColor;
+  font-size: 28px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.welcome-popup__close:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 2px;
+}
