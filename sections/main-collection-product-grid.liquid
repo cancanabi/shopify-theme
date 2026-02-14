@@ -35,17 +35,10 @@
   <section class="sp-collection-hero">
     <div class="sp-collection-hero__inner page-width">
       <div class="sp-collection-hero__content">
-        <span class="sp-collection-hero__eyebrow">Collection</span>
         <h1 class="sp-collection-hero__title">{{ collection.title | escape }}</h1>
-        {%- if collection.description != blank -%}
-          <div class="sp-collection-hero__description rte">
-            {{ collection.description }}
-          </div>
-        {%- else -%}
-          <p class="sp-collection-hero__description">
-            A composed selection of signature fragrances crafted for quiet luxury and everyday rituals.
-          </p>
-        {%- endif -%}
+        <p class="sp-collection-hero__count">
+          {{ 'products.facets.product_count_simple' | t: count: collection.products_count }}
+        </p>
       </div>
     </div>
   </section>
@@ -56,39 +49,7 @@
     <div class="sp-collection-bar">
       <div class="sp-collection-bar__inner page-width">
         <div class="sp-collection-bar__top">
-          <div class="sp-collection-bar__left">
-            <span class="sp-collection-bar__label">Filter</span>
-            <div class="product-count-vertical light sp-collection-bar__count" role="status">
-              <h2 class="product-count__text text-body">
-                <span id="ProductCountDesktop">
-                  {%- if collection.results_count -%}
-                    {{
-                      'templates.search.results_with_count'
-                      | t: terms: collection.terms, count: collection.results_count
-                    }}
-                  {%- elsif collection.products_count == collection.all_products_count -%}
-                    {{ 'products.facets.product_count_simple' | t: count: collection.products_count }}
-                  {%- else -%}
-                    {{
-                      'products.facets.product_count'
-                      | t: product_count: collection.products_count, count: collection.all_products_count
-                    }}
-                  {%- endif -%}
-                </span>
-              </h2>
-              <div class="loading-overlay__spinner">
-                <svg
-                  aria-hidden="true"
-                  focusable="false"
-                  class="spinner"
-                  viewBox="0 0 66 66"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <circle class="path" fill="none" stroke-width="6" cx="33" cy="33" r="30"></circle>
-                </svg>
-              </div>
-            </div>
-          </div>
+          <div class="sp-collection-bar__left"></div>
           <div class="sp-collection-bar__right">
             {% comment %} Sort is the first tabbable element when filter type is vertical {% endcomment %}
             {%- if section.settings.enable_sorting and section.settings.filter_type == 'vertical' -%}
